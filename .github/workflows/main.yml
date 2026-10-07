@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Unzip project
+        run: unzip -q VirtualMouse-Android.zip
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -15,9 +17,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - run: bash get_model.sh
-      - run: gradle assembleDebug --no-daemon
+      - name: Download hand model
+        working-directory: VirtualMouse
+        run: bash get_model.sh
+      - name: Build
+        working-directory: VirtualMouse
+        run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: VirtualMouse-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: VirtualMouse/app/build/outputs/apk/debug/app-debug.apk
